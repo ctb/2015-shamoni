@@ -23,7 +23,13 @@ def main():
     records = parse_blastz2.parse_blastz(fp, args.min_length)
     print >>sys.stderr, 'loaded %d records with min length %d' % (len(records), args.min_length)
 
-    for (query_name, s_name, s_start, s_end) in records:
+    # make things unique by subject match
+    uniq_records = [ (s_name, s_start, s_end) for (q, s_name, s_start, s_end) in records ]
+    uniq_records = set(uniq_records)
+
+    print >>sys.stderr, 'uniqified down to %d records' % (len(uniq_records),)
+
+    for (s_name, s_start, s_end) in uniq_records:
         seq = sequences[s_name]
         
         b_start = max(s_start - 1 - args.boundary, 0)
